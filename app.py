@@ -249,10 +249,14 @@ if recommend_btn:
             genres_display = " · ".join(genre_parts) if genre_parts else "N/A"
 
             with cols[i]:
-                # Poster placeholder image
-                poster_path = fetch_poster(row["movie_title"])
-                if os.path.exists(poster_path):
-                    st.image(poster_path, use_container_width=True)
+                # Fetch poster — returns either a TMDB URL or local placeholder path
+                poster = fetch_poster(row["movie_title"])
+
+                # Display if it's a URL (TMDB) or a local file that exists
+                if poster.startswith("http"):
+                    st.image(poster, use_container_width=True)
+                elif os.path.exists(poster):
+                    st.image(poster, use_container_width=True)
 
                 # Movie card HTML
                 st.markdown(f"""

@@ -9,14 +9,22 @@ import numpy as np
 import os
 import requests
 
-# ── Load API key from environment variable ────────────────────
+# ── Load API key ──────────────────────────────────────────────
+# Priority:
+# 1. Streamlit Cloud → reads from st.secrets (set in App Settings → Secrets)
+# 2. Local → reads from .env file via python-dotenv
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass
 
-TMDB_API_KEY = os.getenv("TMDB_API_KEY", "01039236253954282c424437a6a2185d")
+# Try Streamlit secrets first (works on Streamlit Cloud)
+try:
+    import streamlit as st
+    TMDB_API_KEY = st.secrets.get("TMDB_API_KEY", os.getenv("TMDB_API_KEY", ""))
+except Exception:
+    TMDB_API_KEY = os.getenv("TMDB_API_KEY", "")
 
 TMDB_SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
 TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
